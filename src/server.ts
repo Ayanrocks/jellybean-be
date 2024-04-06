@@ -1,7 +1,7 @@
 import express, { Express, Request, Response } from "express";
 import dotenv from "dotenv";
 dotenv.config();
-
+import morgan from 'morgan';;
 import logger from "./config/logger";
 import {
     getDbName,
@@ -12,10 +12,20 @@ import {
 const app: Express = express();
 const port = process.env.PORT || 3000;
 
+const morganMiddleware = morgan(
+    ":method :url :status :res[content-length] - :response-time ms",
+    {
+        stream: {
+            // Configure Morgan to use our custom logger with the http severity
+            write: (message: String) => logger.http(message.trim()),
+        },
+    },
+);
+
 initMongoConnection();
 
-app.use(logger.info)
-app.use(express.json())
+app.use(morganMiddleware);
+app.use(express.json());
 
 // routes
 require("./routes/auth")(app);
