@@ -1,5 +1,5 @@
 // Configuration File for database connection
-import { MongoClient, MongoError, ServerApiVersion } from "mongodb";
+import { Db, MongoClient, MongoError, ServerApiVersion } from "mongodb";
 import logger from "./logger";
 
 function getMongoURL(): string {
@@ -40,6 +40,10 @@ function getMongoConnection(): MongoClient {
     return MongoConnection;
 }
 
+function getMongoDb(): Db {
+    return getMongoConnection().db(getDbName());
+}
+
 function getDbName(): string {
     return process.env.MONGO_DBNAME || "jellybean";
 }
@@ -58,7 +62,7 @@ function initMongoConnection() {
 async function pingMongoDb() {
     let client = getMongoConnection();
     try {
-        let dbName = process.env.MONGO_DBNAME || "jellybean";
+        let dbName = getDbName();
 
         // Send a ping to confirm a successful connection
         await client.db(dbName).command({ ping: 1 });
@@ -72,4 +76,4 @@ async function pingMongoDb() {
     }
 }
 
-export { initMongoConnection, getMongoConnection, getDbName };
+export { initMongoConnection, getMongoConnection, getDbName, getMongoDb };

@@ -5,5 +5,5 @@ import { LoginController } from "../controllers/authController";
 
 module.exports = (app: Express) => {
     // use this route to search for if the user exists or not
-    app.get("/login", LoginController);
+    app.post("/login", LoginController);
 };
